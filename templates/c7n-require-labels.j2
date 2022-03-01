@@ -1,0 +1,32 @@
+policies:
+  - name: specific-label-exists
+    resource: gcp.instance
+    mode:
+      type: gcp-audit
+      methods:
+        - beta.compute.instances.insert
+    filters:
+      - or:
+{%- for label in LABELS %}
+        - "tag:{{ label }}": absent
+{%- endfor %}
+{%- for label in LIST %}
+        - type: value
+          key: tag:{{ LIST[label].name }}
+          op: in
+          value: {{LIST[label].list}}
+{%- endfor %}
+{%- for label in REGEX %}
+        - type: value
+          key: tag:{{ REGEX[label].name }}
+          op: regex
+          value: '{{ REGEX[label].regex }}'
+{%- endfor %}
+    actions:
+      - type: notify
+        to:
+          - {{ to_address }}
+        template: policy-template
+        transport:
+          type: pubsub
+          topic: projects/{{ project_id}}/topics/{{ topic }}

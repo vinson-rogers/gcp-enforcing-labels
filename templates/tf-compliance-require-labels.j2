@@ -1,0 +1,24 @@
+Feature: Require Labels
+{% for label in LABELS %}
+Scenario: {{ label }}
+    Given I have resource that supports labels defined
+    When it has labels
+    Then it must have labels
+    Then it must contain {{ label }}
+{% endfor %}
+{%- for label in LIST %}
+Scenario: {{ label }}
+    Given I have resource that supports labels defined
+    When it has labels
+    Then it must have labels
+    Then it must contain {{ label }}
+    And its value must match the "^(a|b|c)$" regex
+{% endfor %}
+{%- for label in REGEX %}
+Scenario: {{ label }}
+    Given I have resource that supports labels defined
+    When it has labels
+    Then it must have labels
+    Then it must contain {{ label }}
+    And its value must match the "{{ REGEX[label].regex }}" regex
+{% endfor %}

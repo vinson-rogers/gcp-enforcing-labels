@@ -1,0 +1,17 @@
+LABELS:
+  - owner
+  - application
+
+LIST:
+  environment:
+    name: environment
+    list: [dev, staging, prod]
+
+REGEX:
+  version:
+    name: version
+    regex: ^[0-9]\.[0-9]\.[0-9]$
+
+to_address: vinsonr
+topic: custodian-notifications
+project_id: prod-sh-t1-app-300917
