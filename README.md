@@ -1,4 +1,5 @@
 #1. Overview & Setup
+
 Using this document you will learn how to automate the enforcement and auditing of labels for resources on Google Cloud Platform.  We will be using the following tools and GCP services to facilitate this:
 
 - Terraform Compliance
@@ -23,6 +24,7 @@ The procedure involves the following steps:
 9. (automatic) Deploy Cloud Custodian resources
 
 ##1.1 Authenticating to GCP
+
 In order to deploy your resources into GCP you will need to authenticate first and set the credentials for subsequent Terraform runs to use. Using the gcloud CLI execute the following:
 
 `gcloud auth application-default login`
@@ -49,9 +51,11 @@ Your active configuration is: [default]
 These defaults would be used in the absence of specific project targets in Terraform. We will be explicitly setting these values for any resources deployed in our example Terraform.
 
 #2. Terraform Compliance
+
 Using Terraform Compliance in your CI/CD pipeline allows the ability to enforce specific aspects of configurations before resources are deployed to GCP. This prevents the accumulation of improperly labeled resources that would need to be audited and updated.
 
 ##2.1 Feature File
+
 Feature files use behavior driven development (BDD) to define the rules to apply to the Terraform plan file.
 
 For the use case of enforcing labels we will have one feature file with one scenario per label being required:
@@ -76,6 +80,7 @@ Scenario: environment
 We will be automating the generation of the features file used to enforce labels for GCP resources defined in Terraform. 
 
 ##2.2 Using Terraform Compliance
+
 Once the feature file is created and pushed to your repository it will be referenced in a build step that gates the deployment:
 
 terraform-compliance -f git:https://github.com/user/repo -p plan.out
@@ -84,6 +89,7 @@ terraform-compliance -f git:https://github.com/user/repo -p plan.out
 Only a successful result should allow continuing to the   terraform apply   step.
 
 #3. Cloud Custodian
+
 Cloud Custodian is a Python based policy engine. It uses YAML to define the policies, acting on specific GCP API methods, selecting resources based on defined filters, and finally performing actions. 
 
 Example policy file:
@@ -112,9 +118,11 @@ policies:
 The policy above checks for the absence of any of the listed labels (Cloud Custodian uses the same ‘tag’ implementation for GCP & AWS) and executes the actions if any of the filters return true.
 
 #4. Jinja2 Templates
+
 In this section we’ll cover the jinja2 templates for each target application configuration. 
 
 ##4.1 Template Inputs
+
 The following jinja2 templates implement checks the following types:
 
 - LABELS - these are only tested for their presence
@@ -148,6 +156,7 @@ project_id: prod-sh-t1-app-300917
 
 
 ##4.2 c7n Template
+
 The Cloud Custodian jinja2 template used to render the appropriate YAML config file is shown below.
 
 templates/c7n-require-labels.j2:
@@ -187,6 +196,7 @@ policies:
 ```
 
 ##4.3 Terraform Compliance Template
+
 The Terraform Compliance  jinja2 template used to render the appropriate BDD config file is shown below.
 
 templates/tf-compliance-require-labels.j2:
@@ -219,6 +229,7 @@ Scenario: {{ label }}
 
 
 ##4.4 Rendering Both Templates
+
 Once you have the two files you can render both of the target configuration files.
 
 <TODO>
@@ -226,6 +237,7 @@ Once you have the two files you can render both of the target configuration file
 
 
 #5. Terraform
+
 In this section we’ll cover the Terraform necessary to set up your GCP resources and kickstart the CI/CD process for customizing and deploying Cloud Custodian and your Terraform Compliance configuration. These are all contained in the source repository and only need the terraform.tfvars file edited.
 
 Documented below are several TF files used to enable APIs in the target project.
@@ -411,21 +423,25 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 
 
 #6. Initial Bootstrap & Ongoing CI/CD
+
 In this section we’ll cover the exact steps necessary to implement the c7n policies and show an example Cloud Build step that uses the Terraform Compliance policy.
 
 ##6.1 Clone project repo
+
 Use the following command to clone the repository containing the Terraform and Jinja2 templates:
 
 git clone https://github.com/vinson-rogers/gcp-enforcing-labels
 
 
 ##6.2 Customize Variables and Values
+
 Edit the following files and update each for your environment and use case:
 
 terraform.tfvars
 required-labels-input.yaml
 
 ##6.3 Deploy Terraform
+
 This code should be incorporated into your centralized IaC. For demonstration purposes you can deploy it from your local workstation:
 
 cd terraform
