@@ -215,12 +215,9 @@ Scenario: {{ label }}
 
 
 4.4 Rendering Both Templates
-Once you have the two files you can deploy your function with the following command. You should not allow unauthorized access. If you change FUNCTION_NAME be sure to update the code in main.py and change the exported function name.
+Once you have the two files you can render both of the target configuration files.
 
-FUNCTION_NAME="vmToDNS"
-gcloud functions deploy $FUNCTION_NAME --runtime python37 --trigger-topic $TOPIC
-
-# Note - you do NOT need to allow unauthorized access - answer NO at the prompt
+<TODO>
 
 
 
