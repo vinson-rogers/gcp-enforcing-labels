@@ -1,4 +1,5 @@
-#!/Library/GoogleCorpSupport/bin/python3
+#!/usr/bin/python
+
 from jinja2 import Template
 import yaml
 
