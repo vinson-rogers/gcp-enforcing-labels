@@ -8,9 +8,9 @@ data "google_sourcerepo_repository" "repo" {
   name    = "c7n"
 }
 
-data "google_sourcerepo_repository" "infa-repo" {
+resource "google_sourcerepo_repository" "infra-repo" {
   project = var.project
-  name    = "infra"
+  name    = "infra-deploy"
 }
 
 resource "google_sourcerepo_repository_iam_member" "member" {
