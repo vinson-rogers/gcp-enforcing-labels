@@ -12,7 +12,7 @@ Scenario: {{ label }}
     When it has labels
     Then it must have labels
     Then it must contain {{ label }}
-    And its value must match the "^(a|b|c)$" regex
+    And its value must match the "^(dev|test|prod)$" regex
 {% endfor %}
 {%- for label in REGEX %}
 Scenario: {{ label }}
