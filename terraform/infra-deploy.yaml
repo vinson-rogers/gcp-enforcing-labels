@@ -43,7 +43,7 @@ steps:
           ln -s /opt/.tfenv/bin/* /usr/local/bin
           tfenv install
           terraform init
-          terraform-compliance -f git:https://source.developers.google.com/p/prod-sh-t1-app-300917/r/infra-deploy -p plan.out
+          terraform-compliance -f git:https://source.developers.google.com/p/prod-sh-t1-app-300917/r/c7n-policies -p plan.out
   - id: 'terraform-apply'
     waitFor:
       - 'terraform-compliance'
