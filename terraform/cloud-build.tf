@@ -53,3 +53,15 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
     }
   }
 }
+
+resource "google_cloudbuild_trigger" "infra-deploy-trigger" {
+  project = var.project
+
+  trigger_template {
+    project_id  = var.project
+    branch_name = "^master$"
+    repo_name   = "infra"
+  }
+
+  filename = "infra-deploy.yaml"
+}

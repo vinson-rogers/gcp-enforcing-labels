@@ -1,10 +1,13 @@
 policies:
-  - name: specific-label-exists
-    resource: gcp.instance
+{%- for resource in RESOURCES %}
+  - name: specific-label-exists-{{ resource }}
+    resource: gcp.{{ resource }}
     mode:
       type: gcp-audit
       methods:
-        - beta.compute.instances.insert
+{%- for method in RESOURCES[resource] %}
+        - {{ method }}
+{%- endfor %}
     filters:
       - or:
 {%- for label in LABELS %}
@@ -30,3 +33,4 @@ policies:
         transport:
           type: pubsub
           topic: projects/{{ project_id}}/topics/{{ topic }}
+{% endfor %}

@@ -1,0 +1,61 @@
+---
+steps:
+  - id: 'fmt-validate'
+    name: 'alpine:3.13.3'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -xeo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+          tfenv install
+          terraform fmt -recursive -check -diff .
+          terraform init -backend=false
+          terraform validate .
+  - id: 'terraform-init-plan'
+    waitFor:
+      - 'fmt-validate'
+    name: 'alpine:3.13.3'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+          tfenv install
+          terraform init
+          terraform plan -input=false -o plan.out
+  - id: 'terraform-compliance'
+    waitFor:
+      - 'fmt-init-plan
+    name: 'alpine:3.13.3'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+          tfenv install
+          terraform init
+          terraform-compliance "plan.out"
+  - id: 'terraform-apply'
+    waitFor:
+      - 'fmt-compliance'
+    name: 'alpine:3.13.3'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+          set -eo pipefail
+          apk add git bash curl
+          git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
+          ln -s /opt/.tfenv/bin/* /usr/local/bin
+          tfenv install
+          terraform init
+          terraform apply -auto-approve "plan.out"
