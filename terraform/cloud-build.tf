@@ -59,8 +59,8 @@ resource "google_cloudbuild_trigger" "infra-deploy-trigger" {
 
   trigger_template {
     project_id  = var.project
-    branch_name = "^master$"
-    repo_name   = "infra"
+    branch_name = "^main$"
+    repo_name   = "infra-deploy"
   }
 
   filename = "infra-deploy.yaml"
