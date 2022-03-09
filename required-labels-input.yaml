@@ -17,5 +17,5 @@ RESOURCES:
   bigquery: [v2.bigquery.dataset.insert, v2.bigquery.dataset.delete]
 
 to_address: vinsonr
-topic: custodian-notifications
+topic: c7n-notifications
 project_id: prod-sh-t1-app-300917
