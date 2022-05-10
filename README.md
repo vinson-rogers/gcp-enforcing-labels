@@ -14,14 +14,14 @@ Using this document you will learn how to automate the enforcement and auditing 
 The procedure involves the following steps:
 
 1. Clone project repository
-2. Customize Terraform for your environment
+2. Customize terraform.tfvars for your environment
 3. Deploy resources via Terraform
-4. Clone Cloud Custodian into repository into CSR
-5. Add required inputs to jinja2 input file
-6. (optional) Customize Cloud Custodian actions
-7. Push update to Cloud Source Repository
-8. (automatic) Run Cloud Build jobs
-9. (automatic) Deploy Cloud Custodian resources
+4. Add required inputs to jinja2 input file
+5. (optional) Customize Cloud Custodian actions
+6. Push input YAML to repo 'c7n-policies'
+7. (automatic) Run Cloud Build jobs
+8. (automatic) Deploy Cloud Custodian resources
+9. run example infra-deploy pipeline with terraform compliance feature
 
 ## 1.1 Authenticating to GCP
 
@@ -426,6 +426,10 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 
 In this section we’ll cover the exact steps necessary to implement the c7n policies and show an example Cloud Build step that uses the Terraform Compliance policy.
 
+6. Push input YAML to repo 'c7n-policies'
+7. (automatic) Run Cloud Build jobs
+8. (automatic) Deploy Cloud Custodian resources
+9. run example infra-deploy pipeline with terraform compliance feature
 ## 6.1 Clone project repo
 
 Use the following command to clone the repository containing the Terraform and Jinja2 templates:
@@ -448,4 +452,15 @@ cd terraform
 terraform apply
 
 
-## 6.4 Clone CSRs and 
+## 6.4 Clone Repos & Upload YAML
+
+Run the following to clone the c7n-policies repo and upload the customized YAML:
+
+```
+gcloud source repos clone c7n-policies --project=$PROJECT_ID
+cd ~/$WORKING_DIR/c7n-policies
+cp ~/$WORKING_DIR/gcp-enforcing-lables/required-labels-input.yaml .
+git add required-labels-input.yaml
+git commit -m "initial commit of required-labels-input.yaml"
+git push origin master
+```
