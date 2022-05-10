@@ -426,10 +426,6 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 
 In this section we’ll cover the exact steps necessary to implement the c7n policies and show an example Cloud Build step that uses the Terraform Compliance policy.
 
-6. Push input YAML to repo 'c7n-policies'
-7. (automatic) Run Cloud Build jobs
-8. (automatic) Deploy Cloud Custodian resources
-9. run example infra-deploy pipeline with terraform compliance feature
 ## 6.1 Clone project repo
 
 Use the following command to clone the repository containing the Terraform and Jinja2 templates:
@@ -464,3 +460,8 @@ git add required-labels-input.yaml
 git commit -m "initial commit of required-labels-input.yaml"
 git push origin master
 ```
+
+
+## 6.5 Run example infra deployment pipeline
+
+You can use the example infra-deploy directory to run a build pipeline with the terraform compliance feature set up. If your resources are compliant with the input YAML it will pass and deploy the infrastructure.
