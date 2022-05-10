@@ -10,7 +10,8 @@ steps:
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
           ln -s /opt/.tfenv/bin/* /usr/local/bin
-          tfenv install
+          tfenv install 1.1.9
+          tfenv use 1.1.9
           terraform fmt -recursive -check -diff .
           terraform init -backend=false
           terraform validate .
@@ -26,24 +27,37 @@ steps:
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
           ln -s /opt/.tfenv/bin/* /usr/local/bin
-          tfenv install
+          tfenv install 1.1.9
+          tfenv use 1.1.9
           terraform init
-          terraform plan -input=false -o plan.out
-  - id: 'terraform-compliance'
+          terraform plan -input=false -out=plan.out
+  - id: 'copy-feature-file'
     waitFor:
-      - 'fmt-init-plan
-    name: 'alpine:3.13.3'
+      - 'terraform-init-plan'
+    name: 'gcr.io/cloud-builders/gsutil'
     entrypoint: 'sh'
     args:
       - '-c'
       - |
-          set -eo pipefail
+        #set -eo pipefail
+          gsutil cp gs://${PROJECT_ID}_artifact_bucket/enforcing_labels/tf-compliance-labels.feature .
+  - id: 'terraform-compliance'
+    waitFor:
+      - 'copy-feature-file'
+    name: 'python'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        #set -eo pipefail
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
           ln -s /opt/.tfenv/bin/* /usr/local/bin
-          tfenv install
+          tfenv install 1.1.9
+          tfenv use 1.1.9
           terraform init
-          terraform-compliance -f git:https://source.developers.google.com/p/prod-sh-t1-app-300917/r/c7n-policies -p plan.out
+          pip install terraform-compliance
+          terraform-compliance -f . -p plan.out
   - id: 'terraform-apply'
     waitFor:
       - 'terraform-compliance'
@@ -56,6 +70,7 @@ steps:
           apk add git bash curl
           git clone https://github.com/tfutils/tfenv.git /opt/.tfenv
           ln -s /opt/.tfenv/bin/* /usr/local/bin
-          tfenv install
+          tfenv install 1.1.9
+          tfenv use 1.1.9
           terraform init
           terraform apply -auto-approve "plan.out"
