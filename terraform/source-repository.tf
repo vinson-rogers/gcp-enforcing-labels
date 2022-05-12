@@ -1,15 +1,15 @@
 resource "google_sourcerepo_repository" "policy-repo" {
-  project = var.project
+  project = var.project_id
   name    = "c7n-policies"
 }
 
 data "google_sourcerepo_repository" "repo" {
-  project = var.project
+  project = var.project_id
   name    = "c7n"
 }
 
 resource "google_sourcerepo_repository" "infra-repo" {
-  project = var.project
+  project = var.project_id
   name    = "infra-deploy"
 }
 

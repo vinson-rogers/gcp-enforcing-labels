@@ -1,8 +1,8 @@
 
 resource "google_project_iam_member" "most_privilege_approach" {
-  project = var.project
+  project = var.project_id
   role    = "roles/editor"
-  member  = "serviceAccount:${var.project}@appspot.gserviceaccount.com"
+  member  = "serviceAccount:${var.project_id}@appspot.gserviceaccount.com"
 }
 
 resource "google_organization_iam_member" "perms" {

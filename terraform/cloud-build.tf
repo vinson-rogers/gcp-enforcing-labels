@@ -1,10 +1,10 @@
 resource "google_cloudbuild_trigger" "clone-c7n" {
-  project = var.project
+  project = var.project_id
 
   name = "clone-c7n-repo"
 
   trigger_template {
-    project_id = var.project
+    project_id = var.project_id
     # branch for dummy commit to trigger clone, push of c7n repo
     branch_name = "^c7n-tag$"
     repo_name   = "c7n"
@@ -48,12 +48,12 @@ resource "google_cloudbuild_trigger" "clone-c7n" {
 }
 
 resource "google_cloudbuild_trigger" "c7n-container-trigger" {
-  project = var.project
+  project = var.project_id
 
   name = "build-c7n-container"
 
   trigger_template {
-    project_id  = var.project
+    project_id  = var.project_id
     branch_name = "^master$"
     repo_name   = "c7n"
   }
@@ -87,12 +87,12 @@ resource "google_cloudbuild_trigger" "c7n-container-trigger" {
 }
 
 resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
-  project = var.project
+  project = var.project_id
 
   name = "deploy-c7n-policies"
 
   trigger_template {
-    project_id  = var.project
+    project_id  = var.project_id
     branch_name = "^master$"
     repo_name   = "c7n-policies"
   }
@@ -110,7 +110,7 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
       args = ["-c", "python render.py"]
     }
     step {
-      name       = "us-central1-docker.pkg.dev/${var.project}/cloud-custodian-repo/c7n:${var.image_sha}"
+      name       = "us-central1-docker.pkg.dev/${var.project_id}/cloud-custodian-repo/c7n:${var.image_sha}"
       entrypoint = "bash"
       #args       = ["-eEuo", "pipefail", "-c", "cp /workspace/c7n-labels.yaml . &&\nfor i in $(find . -name '*.yaml' ! -name required-labels-input.yaml); do GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i; done"]
       args = ["-eEuo", "pipefail", "-c", "for i in $(find . -name '*.yaml' ! -name required-labels-input.yaml); do GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i; done"]
@@ -125,12 +125,12 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 }
 
 resource "google_cloudbuild_trigger" "infra-deploy-trigger" {
-  project = var.project
+  project = var.project_id
 
   name = "example-infra-deploy"
 
   trigger_template {
-    project_id  = var.project
+    project_id  = var.project_id
     branch_name = "^main$"
     repo_name   = "infra-deploy"
   }
