@@ -13,9 +13,9 @@ REGEX:
     regex: ^[0-9]_[0-9]_[0-9]$
 
 RESOURCES:
-  compute: [beta.compute.instances.insert]
-  bigquery: [v2.bigquery.dataset.insert, v2.bigquery.dataset.delete]
+  instance: [beta.compute.instances.insert]
+  bq-dataset: [v2.bigquery.dataset.insert, v2.bigquery.dataset.delete]
 
-to_address: vinsonr
+to_address: someone
 topic: c7n-notifications
-project_id: prod-sh-t1-app-300917
+project_id: your-project-id
