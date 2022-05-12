@@ -105,13 +105,15 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
     }
     step {
       name       = "python"
-      entrypoint = "python"
-      args       = ["render.py"]
+      entrypoint = "bash"
+      #args       = ["-c", "python render.py &&\ncp c7n-labels.yaml /workspace/c7n-labels.yaml"]
+      args = ["-c", "python render.py"]
     }
     step {
       name       = "us-central1-docker.pkg.dev/${var.project}/cloud-custodian-repo/c7n:${var.image_sha}"
       entrypoint = "bash"
-      args       = ["-eEuo", "pipefail", "-c", "for i in $(find . -name '*.yaml' ! -name required-labels-input.yaml); do GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i; done"]
+      #args       = ["-eEuo", "pipefail", "-c", "cp /workspace/c7n-labels.yaml . &&\nfor i in $(find . -name '*.yaml' ! -name required-labels-input.yaml); do GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i; done"]
+      args = ["-eEuo", "pipefail", "-c", "for i in $(find . -name '*.yaml' ! -name required-labels-input.yaml); do GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i; done"]
     }
     artifacts {
       objects {
