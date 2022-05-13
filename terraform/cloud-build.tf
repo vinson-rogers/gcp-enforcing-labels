@@ -22,7 +22,7 @@ resource "google_cloudbuild_trigger" "clone-c7n" {
     step {
       name       = "gcr.io/cloud-builders/git"
       entrypoint = "bash"
-      args       = ["-c", "cp -R cloud-custodian/* c7n"]
+      args       = ["-c", "mv cloud-custodian/* ."]
     }
     step {
       name = "gcr.io/cloud-builders/git"

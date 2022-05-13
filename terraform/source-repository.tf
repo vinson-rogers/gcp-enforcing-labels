@@ -3,7 +3,7 @@ resource "google_sourcerepo_repository" "policy-repo" {
   name    = "c7n-policies"
 }
 
-data "google_sourcerepo_repository" "repo" {
+resource "google_sourcerepo_repository" "repo" {
   project = var.project_id
   name    = "c7n"
 }
@@ -14,8 +14,8 @@ resource "google_sourcerepo_repository" "infra-repo" {
 }
 
 resource "google_sourcerepo_repository_iam_member" "member" {
-  project    = data.google_sourcerepo_repository.repo.project
-  repository = data.google_sourcerepo_repository.repo.name
+  project    = google_sourcerepo_repository.repo.project
+  repository = google_sourcerepo_repository.repo.name
   role       = "roles/viewer"
   member     = "serviceAccount:${data.google_project.project.number}@cloudbuild.gserviceaccount.com"
 }
