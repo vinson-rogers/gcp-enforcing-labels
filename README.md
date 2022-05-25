@@ -426,11 +426,22 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 
 In this section we’ll cover the exact steps necessary to implement the c7n policies and show an example Cloud Build step that uses the Terraform Compliance policy.
 
+Set up variables and create a working directory:
+
+```
+export PROJECT_ID = <YOUR_PROJECT_ID>
+export WORKING_DIR = working-dir-labels
+mkdir ~/$WORKING_DIR && cd ~/$WORKING_DIR
+```
+
 ## 6.1 Clone project repo
 
 Use the following command to clone the repository containing the Terraform and Jinja2 templates:
 
+```
 git clone https://github.com/vinson-rogers/gcp-enforcing-labels
+cd ~/$WORKING_DIR/gcp-enforcing-labels
+```
 
 
 ## 6.2 Customize Variables and Values
