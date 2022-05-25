@@ -54,7 +54,7 @@ resource "google_cloudbuild_trigger" "c7n-container-trigger" {
 
   trigger_template {
     project_id  = var.project_id
-    branch_name = "^master$"
+    branch_name = "^main$"
     repo_name   = "c7n"
   }
 
@@ -93,7 +93,7 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
 
   trigger_template {
     project_id  = var.project_id
-    branch_name = "^master$"
+    branch_name = "^main"
     repo_name   = "c7n-policies"
   }
 
