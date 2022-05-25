@@ -3,7 +3,7 @@
 from jinja2 import Template
 import yaml
 
-with open("required-labels-input.yaml", "r") as f:
+with open("templates/required-labels-input.yaml", "r") as f:
     try:
         data = yaml.safe_load(f)
     except yaml.YAMLError as exc:
