@@ -1,7 +1,10 @@
 #!/usr/bin/python
 
+import os
 from jinja2 import Template
 import yaml
+
+os.makedirs('output', exist_ok=False)
 
 with open("templates/required-labels-input.yaml", "r") as f:
     try:
@@ -15,7 +18,7 @@ with open('templates/tf-compliance-require-labels.j2') as file:
 output = template.render(data)
 #print(output)
 
-with open("tf-compliance-labels.feature", "w") as f:
+with open("output/tf-compliance-labels.feature", "w") as f:
     f.write(output)
 f.close()
 
@@ -25,6 +28,6 @@ with open('templates/c7n-require-labels.j2') as file:
 output = template.render(data)
 #print(output)
 
-with open("c7n-labels.yaml", "w") as f:
+with open("output/c7n-labels.yaml", "w") as f:
     f.write(output)
 f.close()

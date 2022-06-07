@@ -1,0 +1,62 @@
+---
+steps:
+  - id: 'clone-c7n-repo'
+    name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        if ! gcloud artifacts docker images list us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n --include-tags 2>&1 | grep $_C7N_TAG;
+        then
+          git clone -b $_C7N_TAG --depth 1 https://github.com/cloud-custodian/cloud-custodian.git
+        fi;
+        #git config --global user.email automated@localhost
+        #git config --global user.name Cloud Build
+        #git add .
+        #git commit -m "automated commit"
+        #git push origin master
+  - id: 'build-c7n-container'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        #if ! gcloud artifacts docker images list us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n --include-tags 2>&1 | grep $_C7N_TAG;
+        if ls cloud-custodian
+        then
+          cd cloud-custodian
+          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n:$_C7N_TAG .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n:$_C7N_TAG
+        fi;
+  - id: 'render'
+    name: 'python'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        pip install -r requirements.txt --user
+        python render.py
+  - id: 'deploy-policies'
+    name: 'us-central1-docker.pkg.dev/${PROJECT_ID}/cloud-custodian-repo/c7n:${_C7N_TAG}'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -e
+        for i in $(find ./output -name '*.yaml' ! -name required-labels-input.yaml);
+        do
+          GOOGLE_CLOUD_PROJECT=${PROJECT_ID} custodian run -s=/tmp $i;
+        done
+
+#options:
+  #logging: CLOUD_LOGGING_ONLY
+timeout: 900s
+substitutions:
+  _C7N_TAG: 0.9.15.0
+artifacts:
+  objects:
+    location: 'gs://${PROJECT_ID}_artifact_bucket/enforcing_labels/'
+    paths: ['tf-compliance-labels.feature', 'c7n-labels.yaml']
