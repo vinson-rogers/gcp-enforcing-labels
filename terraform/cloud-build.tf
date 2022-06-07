@@ -3,6 +3,8 @@ resource "google_cloudbuild_trigger" "clone-c7n" {
 
   name = "clone-c7n-repo"
 
+  count = 0
+
   trigger_template {
     project_id = var.project_id
     # branch for dummy commit to trigger clone, push of c7n repo
@@ -51,6 +53,8 @@ resource "google_cloudbuild_trigger" "c7n-container-trigger" {
   project = var.project_id
 
   name = "build-c7n-container"
+
+  count = 0
 
   trigger_template {
     project_id  = var.project_id
@@ -122,6 +126,17 @@ resource "google_cloudbuild_trigger" "c7n-deploy-trigger" {
       }
     }
   }
+}
+
+resource "google_cloudbuild_trigger" "c7n-clone-build-deploy" {
+  project = var.project_id
+  name    = "c7n-clone-build-deploy"
+  trigger_template {
+    project_id  = var.project_id
+    branch_name = "$main^"
+    repo_name   = "c7n"
+  }
+  filename = "c7n-pipeline.yaml"
 }
 
 resource "google_cloudbuild_trigger" "infra-deploy-trigger" {

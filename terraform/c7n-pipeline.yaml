@@ -1,0 +1,50 @@
+---
+steps:
+  - id: 'clone-c7n-repo'
+    name: 'gcr.io/cloud-builders/git'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -xeo pipefail
+        git clone -b $_C7N_TAG --depth 1 https://github.com/cloud-custodian/cloud-custodian.git
+        # mv cloud-custodian/* .
+        git config --global user.email automated@localhost
+        git config --global user.name Cloud Build
+        git add .
+        git commit -m "automated commit"
+        git push origin master
+  - id: 'build-c7n-container'
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoin: 'bash'
+    args:
+      - '-c'
+      - |
+        set -xeo pipefail
+        cd cloud-custodian
+        if ! gcloud artifacts docker images list us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n --include-tags 2>&1 | grep $_C7N_TAG;
+        then
+          docker build -t us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n:$_C7N_TAG .
+          docker push us-central1-docker.pkg.dev/$PROJECT_ID/cloud-custodian-repo/c7n:$_C7N_TAG
+        fi;
+  - id: 'deploy-c7n-policies'
+    name: 'python'
+    entrypoint: 'bash'
+    args:
+      - '-c'
+      - |
+        set -xeo pipefail
+        pip install -r requirements.txt --user
+        python render.py
+        for i in $(find . -name '*.yaml' ! -name required-labels-input.yaml);
+        do
+          GOOGLE_CLOUD_PROJECT=\"$PROJECT_ID\" custodian run -s=/tmp $i;
+        done
+
+timeout: 900s
+substitutions:
+  _C7N_TAG: 0.9.15.0
+artifacts:
+  objects:
+    location: "gs://${var.project_id}_artifact_bucket/enforcing_labels/"
+      paths: ["tf-compliance-labels.feature", "c7n-labels.yaml"]
