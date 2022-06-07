@@ -59,4 +59,4 @@ substitutions:
 artifacts:
   objects:
     location: 'gs://${PROJECT_ID}_artifact_bucket/enforcing_labels/'
-    paths: ['tf-compliance-labels.feature', 'c7n-labels.yaml']
+    paths: ['output/tf-compliance-labels.feature', 'output/c7n-labels.yaml']
