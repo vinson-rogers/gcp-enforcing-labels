@@ -17,7 +17,7 @@
 # bucket to house function source
 resource "google_storage_bucket" "function_bucket" {
   project                     = var.project_id
-  name                        = "{var.project_id}_{var.function_bucket_name}"
+  name                        = "${var.project_id}_${var.function_bucket_name}"
   location                    = var.function_location
   force_destroy               = true
   uniform_bucket_level_access = true
