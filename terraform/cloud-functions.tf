@@ -40,6 +40,7 @@ resource "google_storage_bucket_object" "archive" {
 
 resource "google_cloudfunctions_function" "function" {
   project     = var.project_id
+  depends_on  = [google_project_service.enable_api]
   region      = var.region
   name        = "c7n-notification-processor"
   description = "processes c7n notifications"

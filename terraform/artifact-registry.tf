@@ -1,8 +1,8 @@
 
 resource "google_artifact_registry_repository" "my-repo" {
-  provider = google-beta
-
-  project = var.project_id
+  provider   = google-beta
+  project    = var.project_id
+  depends_on = [google_project_service.enable_api]
 
   location      = "us-central1"
   repository_id = "cloud-custodian-repo"

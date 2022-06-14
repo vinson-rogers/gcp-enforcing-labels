@@ -1,7 +1,8 @@
 
 resource "google_cloudbuild_trigger" "c7n-clone-build-deploy" {
-  project = var.project_id
-  name    = "c7n-clone-build-deploy"
+  project    = var.project_id
+  depends_on = [google_project_service.enable_api]
+  name       = "c7n-clone-build-deploy"
   trigger_template {
     project_id  = var.project_id
     branch_name = "^master$"
@@ -11,9 +12,9 @@ resource "google_cloudbuild_trigger" "c7n-clone-build-deploy" {
 }
 
 resource "google_cloudbuild_trigger" "infra-deploy-trigger" {
-  project = var.project_id
-
-  name = "example-infra-deploy"
+  project    = var.project_id
+  depends_on = [google_project_service.enable_api]
+  name       = "example-infra-deploy"
 
   trigger_template {
     project_id  = var.project_id

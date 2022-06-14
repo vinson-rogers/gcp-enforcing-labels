@@ -1,16 +1,19 @@
 resource "google_sourcerepo_repository" "policy-repo" {
-  project = var.project_id
-  name    = "c7n-policies"
+  project    = var.project_id
+  name       = "c7n-policies"
+  depends_on = [google_project_service.enable_api]
 }
 
 resource "google_sourcerepo_repository" "repo" {
-  project = var.project_id
-  name    = "c7n"
+  project    = var.project_id
+  name       = "c7n"
+  depends_on = [google_project_service.enable_api]
 }
 
 resource "google_sourcerepo_repository" "infra-repo" {
-  project = var.project_id
-  name    = "infra-deploy"
+  project    = var.project_id
+  name       = "infra-deploy"
+  depends_on = [google_project_service.enable_api]
 }
 
 resource "google_sourcerepo_repository_iam_member" "member" {
