@@ -1,0 +1,5 @@
+org_id               = "<ORG_ID>"
+region               = "us-central1"
+project_id           = "<PROJECT_ID>"
+function_bucket_name = "cf-notify-function"
+function_location    = "us-central1"

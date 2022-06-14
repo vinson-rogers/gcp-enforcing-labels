@@ -1,4 +1,9 @@
 
+resource "google_project_service" "enable_resource_manager" {
+  project = var.project_id
+  service = "cloudresourcemanager.googleapis.com"
+}
+
 resource "google_project_service" "enable_source_repo" {
   project = var.project_id
   service = "sourcerepo.googleapis.com"

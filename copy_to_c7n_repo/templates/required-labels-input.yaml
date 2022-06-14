@@ -18,4 +18,4 @@ RESOURCES:
 
 to_address: someone
 topic: c7n-notifications
-project_id: your-project-id
+project_id: <PROJECT_ID>
